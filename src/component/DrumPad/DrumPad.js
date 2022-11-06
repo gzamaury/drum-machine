@@ -1,8 +1,9 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import PropTypes from "prop-types";
 import { useRef, useEffect } from "react";
+import "./DrumPad.css";
 
-function DrumPad({ padId, keyChar, audioClip }) {
+function DrumPad({ padId, keyChar, audioClip, icon }) {
   const sample = useRef();
   const pad = useRef();
 
@@ -29,12 +30,16 @@ function DrumPad({ padId, keyChar, audioClip }) {
   }, [keyChar, audioClip]);
 
   return (
-    <div className=".drum-pad" id={padId}>
-      <div ref={pad}>
+    <div className="dp-container">
+      <div ref={pad} className="drum-pad" id={padId}>
         <span>{keyChar.toUpperCase()}</span>
-        <audio ref={sample} className="clip" id={keyChar.toUpperCase()}>
-          <source src={audioClip} />
-        </audio>
+        <img src={icon} className="icon" alt="Drum pad icon" />
+        <audio
+          ref={sample}
+          src={audioClip}
+          className="clip"
+          id={keyChar.toUpperCase()}
+        />
       </div>
     </div>
   );
@@ -44,6 +49,7 @@ DrumPad.propTypes = {
   padId: PropTypes.string.isRequired,
   keyChar: PropTypes.string.isRequired,
   audioClip: PropTypes.string.isRequired,
+  icon: PropTypes.string.isRequired,
 };
 
 export default DrumPad;
