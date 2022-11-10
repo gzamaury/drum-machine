@@ -95,9 +95,18 @@ function DrumPad({ padId, keyChar, audioClip, icon }) {
   );
 }
 
+// eslint-disable-next-line consistent-return
+function oneCharValidator(props, propName, componentName) {
+  if (!/^[a-z]{1}$/i.test(props[propName])) {
+    return new Error(
+      `Invalid prop ${propName} supplied to ${componentName}. Validation failed.`
+    );
+  }
+}
+
 DrumPad.propTypes = {
   padId: PropTypes.string.isRequired,
-  keyChar: PropTypes.string.isRequired,
+  keyChar: PropTypes.oneOfType([oneCharValidator]).isRequired,
   audioClip: PropTypes.string.isRequired,
   icon: PropTypes.string.isRequired,
 };
