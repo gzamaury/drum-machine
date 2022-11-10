@@ -1,41 +1,73 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import PropTypes from "prop-types";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useContext } from "react";
 import "./DrumPad.css";
+import AudioContext from "../AudioContext/AudioContext";
+import {
+  getBufferFromAudioElement,
+  createSourceNodeFrom,
+} from "../../utils/AudioAPI";
 
 function DrumPad({ padId, keyChar, audioClip, icon }) {
-  const sample = useRef();
-  const pad = useRef();
+  const sampleRef = useRef();
+  const padRef = useRef();
+  const audioContext = useContext(AudioContext);
+  const bufferRef = useRef();
+  const trackRef = useRef();
 
   useEffect(() => {
-    const sampleRef = sample.current;
-    const padRef = pad.current;
+    function prepareTrack() {
+      trackRef.current = createSourceNodeFrom(bufferRef.current, audioContext);
+      trackRef.current.connect(audioContext.destination);
+    }
 
-    const playSample = () => {
-      sampleRef.play();
+    getBufferFromAudioElement(sampleRef.current, audioContext).then(
+      (buffer) => {
+        bufferRef.current = buffer;
+        prepareTrack();
+      }
+    );
+  }, [audioClip, audioContext]);
+
+  useEffect(() => {
+    const pad = padRef.current;
+
+    function prepareTrack() {
+      trackRef.current = createSourceNodeFrom(bufferRef.current, audioContext);
+      trackRef.current.connect(audioContext.destination);
+    }
+
+    const playTrack = () => {
+      console.log("playing...");
+      if (audioContext.state === "suspended") {
+        audioContext.resume();
+      }
+      trackRef.current.start();
+      prepareTrack();
     };
+
     const KeyListener = (event) => {
       if (keyChar.toUpperCase() === event.key.toUpperCase()) {
-        playSample();
+        playTrack();
       }
     };
 
     window.addEventListener("keydown", KeyListener);
-    padRef.addEventListener("click", playSample);
+    pad.addEventListener("click", playTrack);
 
     return () => {
       window.removeEventListener("keydown", KeyListener);
-      padRef.removeEventListener("click", playSample);
+      pad.removeEventListener("click", playTrack);
     };
-  }, [keyChar, audioClip]);
+  }, [keyChar, audioClip, audioContext]);
 
   return (
     <div className="dp-container">
-      <div ref={pad} className="drum-pad" id={padId}>
+      <div ref={padRef} className="drum-pad" id={padId}>
         <span>{keyChar.toUpperCase()}</span>
         <img src={icon} className="icon" alt="Drum pad icon" />
         <audio
-          ref={sample}
+          ref={sampleRef}
           src={audioClip}
           className="clip"
           id={keyChar.toUpperCase()}
