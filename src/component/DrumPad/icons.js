@@ -8,5 +8,6 @@ const icons = {
   "kick-n-hat": "./imgs/kick-n-hat.svg",
   kick: "./imgs/kick.svg",
   "closed-hh": "./imgs/closed-hh.svg",
+  loading: "./imgs/loading.svg",
 };
 export default icons;

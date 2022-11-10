@@ -1,12 +1,13 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import PropTypes from "prop-types";
-import { useRef, useEffect, useContext } from "react";
+import { useRef, useEffect, useContext, useState } from "react";
 import "./DrumPad.css";
 import AudioContext from "../AudioContext/AudioContext";
 import {
   getBufferFromAudioElement,
   createSourceNodeFrom,
 } from "../../utils/AudioAPI";
+import icons from "./icons";
 
 function DrumPad({ padId, keyChar, audioClip, icon }) {
   const sampleRef = useRef();
@@ -14,8 +15,10 @@ function DrumPad({ padId, keyChar, audioClip, icon }) {
   const audioContext = useContext(AudioContext);
   const bufferRef = useRef();
   const trackRef = useRef();
+  const [status, setStatus] = useState("buffering");
 
   useEffect(() => {
+    const track = trackRef.current;
     function prepareTrack() {
       trackRef.current = createSourceNodeFrom(bufferRef.current, audioContext);
       trackRef.current.connect(audioContext.destination);
@@ -25,11 +28,22 @@ function DrumPad({ padId, keyChar, audioClip, icon }) {
       (buffer) => {
         bufferRef.current = buffer;
         prepareTrack();
+        setStatus("ready");
       }
     );
+
+    return () => {
+      if (track !== trackRef.current) {
+        setStatus("buffering");
+      }
+    };
   }, [audioClip, audioContext]);
 
   useEffect(() => {
+    if (status !== "ready") {
+      return () => {};
+    }
+
     const pad = padRef.current;
 
     function prepareTrack() {
@@ -59,13 +73,17 @@ function DrumPad({ padId, keyChar, audioClip, icon }) {
       window.removeEventListener("keydown", KeyListener);
       pad.removeEventListener("click", playTrack);
     };
-  }, [keyChar, audioClip, audioContext]);
+  }, [keyChar, audioClip, audioContext, status]);
 
   return (
     <div className="dp-container">
       <div ref={padRef} className="drum-pad" id={padId}>
         <span>{keyChar.toUpperCase()}</span>
-        <img src={icon} className="icon" alt="Drum pad icon" />
+        <img
+          src={status === "buffering" ? icons.loading : icon}
+          className="icon"
+          alt="Drum pad icon"
+        />
         <audio
           ref={sampleRef}
           src={audioClip}
