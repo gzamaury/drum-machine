@@ -1,3 +1,7 @@
+:root {
+  --transition-dismiss: opacity 0.3s ease-out;
+}
+
 .display-container {
   height: 100%;
   background-color: rgba(255, 255, 255, 0.3);
@@ -27,6 +31,11 @@
 .display-container #display .section img {
   aspect-ratio: 1 / 1;
   width: 50%;
+  transition: var(--transition-dismiss);
+}
+
+.dismiss {
+  opacity: 0;
 }
 
 .display-container #display .section .text {
@@ -35,6 +44,7 @@
   font-weight: 800;
   color: #ffffff;
   overflow-wrap: anywhere;
+  transition: var(--transition-dismiss);
 }
 
 @media only screen and (orientation: portrait) {
