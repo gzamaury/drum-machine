@@ -60,7 +60,7 @@ function DrumPad({ padId, keyChar, audioClip, icon }) {
       // The audio element is expected to play,
       // but here we're using the Web Audio API,
       // so the audio element has been muted.
-      sampleRef.current.play();
+      // sampleRef.current.play();
     };
 
     const KeyListener = (event) => {
