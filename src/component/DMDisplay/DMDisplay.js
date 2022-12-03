@@ -42,16 +42,17 @@ function DMDisplay({ innerText }) {
       dismiss(textRef.current);
     };
     const setTimers = () => {
+      // here order is important for the clean happening on time o.O
       timeoutIDs.current.push(setTimeout(resetDisplay, 2500));
       timeoutIDs.current.push(setTimeout(dismissDisplay, 250));
     };
-    const cleanTimers = () => {
+    const clearTimers = () => {
       timeoutIDs.current.every((timeoutId) => clearTimeout(timeoutId));
       timeoutIDs.current = [];
     };
 
     const playListener = (event) => {
-      cleanTimers();
+      clearTimers();
 
       setText(updateText(event));
       setIcon(updateIcon(event));
