@@ -42,12 +42,11 @@ function DMDisplay({ innerText }) {
       dismiss(textRef.current);
     };
     const setTimers = () => {
-      // here order is important for the clean happening on time o.O
-      timeoutIDs.current.push(setTimeout(resetDisplay, 2500));
       timeoutIDs.current.push(setTimeout(dismissDisplay, 250));
+      timeoutIDs.current.push(setTimeout(resetDisplay, 2500));
     };
     const clearTimers = () => {
-      timeoutIDs.current.every((timeoutId) => clearTimeout(timeoutId));
+      timeoutIDs.current.forEach((timeoutId) => clearTimeout(timeoutId));
       timeoutIDs.current = [];
     };
 
